@@ -44,4 +44,9 @@ dependencies {
     implementation("androidx.leanback:leanback:1.2.0-alpha02")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("com.google.android.material:material:1.11.0")
+
+    // ExoPlayer / Media3 para reprodução de vídeo fluida na TV
+    implementation("androidx.media3:media3-exoplayer:1.3.0")
+    implementation("androidx.media3:media3-ui:1.3.0")
 }
