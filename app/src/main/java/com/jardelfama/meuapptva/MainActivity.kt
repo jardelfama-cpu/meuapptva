@@ -1,62 +1,67 @@
 package com.jardelfama.meuapptva
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var listViewChannels: ListView
+    private lateinit var playerView: PlayerView
+    private lateinit var exoPlayer: ExoPlayer
+
     private val channels = listOf(
-        Channel(1, "TV Globo"),
-        Channel(2, "SBT"),
-        Channel(3, "Record"),
-        Channel(4, "Band"),
-        Channel(5, "RedeTV!"),
-        Channel(6, "Cultura"),
-        Channel(7, "Discovery"),
-        Channel(8, "Cartoon Network")
+        Channel(1, "TV Globo", "https://storage.googleapis.com/exoplayer-test-media-1/mkv/android-screens-64.mp4"),
+        Channel(2, "SBT", "https://storage.googleapis.com/exoplayer-test-media-1/mkv/android-screens-64.mp4"),
+        Channel(3, "Record", "https://storage.googleapis.com/exoplayer-test-media-1/mkv/android-screens-64.mp4"),
+        Channel(4, "Band", "https://storage.googleapis.com/exoplayer-test-media-1/mkv/android-screens-64.mp4"),
+        Channel(5, "RedeTV!", "https://storage.googleapis.com/exoplayer-test-media-1/mkv/android-screens-64.mp4"),
+        Channel(6, "Cultura", "https://storage.googleapis.com/exoplayer-test-media-1/mkv/android-screens-64.mp4")
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerChannels)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = ChannelAdapter(channels)
+        listViewChannels = findViewById(R.id.listViewChannels)
+        playerView = findViewById(R.id.playerView)
+
+        exoPlayer = ExoPlayer.Builder(this).build()
+        playerView.player = exoPlayer
+
+        val channelNames = channels.map { "${it.number} - ${it.name}" }
+        listViewChannels.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            channelNames
+        )
+
+        listViewChannels.setOnItemClickListener { _, _, position, _ ->
+            playChannel(channels[position].streamUrl)
+        }
+
+        playChannel(channels.first().streamUrl)
     }
 
-    data class Channel(
+    private fun playChannel(url: String) {
+        exoPlayer.setMediaItem(MediaItem.fromUri(url))
+        exoPlayer.prepare()
+        exoPlayer.playWhenReady = true
+    }
+
+    override fun onDestroy() {
+        playerView.player = null
+        exoPlayer.release()
+        super.onDestroy()
+    }
+
+    private data class Channel(
         val number: Int,
-        val name: String
+        val name: String,
+        val streamUrl: String
     )
-
-    private class ChannelAdapter(
-        private val channels: List<Channel>
-    ) : RecyclerView.Adapter<ChannelAdapter.ChannelViewHolder>() {
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_channel, parent, false)
-            return ChannelViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) {
-            val channel = channels[position]
-            holder.channelNumber.text = channel.number.toString()
-            holder.channelName.text = channel.name
-        }
-
-        override fun getItemCount(): Int = channels.size
-
-        private class ChannelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val channelNumber: TextView = itemView.findViewById(R.id.channelNumber)
-            val channelName: TextView = itemView.findViewById(R.id.channelName)
-        }
-    }
 }

@@ -3,30 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#121212"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MeuAppTV"
-        android:textColor="#FFFFFF"
-        android:textSize="28sp"
-        android:textStyle="bold" />
+    <!-- Lista de Canais (Focável pelo Controle Remoto) -->
+    <ListView
+        android:id="@+id/listViewChannels"
+        android:layout_width="350dp"
+        android:layout_height="match_parent"
+        android:background="#1F1F1F"
+        android:divider="#333333"
+        android:dividerHeight="1dp"
+        android:focusable="true"
+        android:padding="8dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Canais"
-        android:textColor="#D0D0D0"
-        android:textSize="18sp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerChannels"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="20dp"
-        android:layout_weight="1" />
+    <!-- Player de Vídeo para a TV -->
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/playerView"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#000000" />
 
 </LinearLayout>
